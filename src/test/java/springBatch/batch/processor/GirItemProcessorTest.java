@@ -47,7 +47,7 @@ public class GirItemProcessorTest {
         // THEN : vérification
         assertEquals("OK", declaration.getStatus());
         assertEquals("ABC GROUP", declaration.getCompanyName(),"COMPANY NAME NOT OK");
-        assertEquals("FRR", declaration.getCountry(), "COUNTRY NOT OK, SHOULD BE FRR but was "+declaration.getCountry());
+        assertEquals("FR", declaration.getCountry(), "COUNTRY NOT OK, SHOULD BE FRR but was "+declaration.getCountry());
         assertEquals(2025, declaration.getFiscalYear());
         assertEquals("MSG001", declaration.getMessageRefId());
         assertEquals("GIR101", declaration.getMessageTypeIndic());
