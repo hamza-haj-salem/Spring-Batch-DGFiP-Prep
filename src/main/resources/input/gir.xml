@@ -1,0 +1,14 @@
+<GIR>
+
+    <MessageSpec>
+        <MessageRefId>MSG005</MessageRefId>
+        <MessageTypeIndic>GIR102</MessageTypeIndic>
+    </MessageSpec>
+
+    <ReportingEntity>
+        <CompanyName>ABC GROUP</CompanyName>
+        <Country>FR</Country>
+        <FiscalYear>2025</FiscalYear>
+    </ReportingEntity>
+
+</GIR>
