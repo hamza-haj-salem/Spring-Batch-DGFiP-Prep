@@ -14,6 +14,7 @@ public class GirItemProcessorTest {
 
     @Test
     void shouldProcessValidGirXml() throws Exception {
+        //test lancement PR dans jenkins depuis branche 3
         //test cheks jenkins 2 -> Github depuis branche 2
         //test cheks jenkins -> Github depuis branche 1
         //test cheks jenkins -> Github depuis master 5
