@@ -23,6 +23,14 @@ pipeline {
         }
     }
      post {
+       always {
+             publishChecks(
+                 name: 'Jenkins CI',
+                 title: 'Jenkins Pipeline Result',
+                 summary: "Build ${currentBuild.currentResult}",
+                 text: "Build #${env.BUILD_NUMBER} terminé avec le statut ${currentBuild.currentResult}"
+             )
+         }
             success {
                 publishChecks name: 'Jenkins Build',
                               title: 'Build réussi',
