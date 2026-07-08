@@ -14,7 +14,7 @@ public class GirItemProcessorTest {
 
     @Test
     void shouldProcessValidGirXml() throws Exception {
-
+        //test cheks jenkins -> Github depuis branche 1
         //test cheks jenkins -> Github depuis master 5
         // GIVEN : création du MessageSpec
         MessageSpecDto messageSpec = new MessageSpecDto();
