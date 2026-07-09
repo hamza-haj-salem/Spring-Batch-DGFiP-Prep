@@ -55,4 +55,56 @@ public class GirItemProcessorTest {
         assertEquals("GIR101", declaration.getMessageTypeIndic());
 
     }
+
+    @Test
+    void shouldRejectDeclarationWhenCompanyNameIsMissing() throws Exception {
+
+        // GIVEN
+        MessageSpecDto messageSpec = new MessageSpecDto();
+        messageSpec.setMessageRefId("MSG002");
+        messageSpec.setMessageTypeIndic("GIR101");
+
+        ReportingEntityDto reportingEntity = new ReportingEntityDto();
+        reportingEntity.setCompanyName(null);
+        reportingEntity.setCountry("FR");
+        reportingEntity.setFiscalYear(2025);
+
+        GirXmlDto dto = new GirXmlDto();
+        dto.setMessageSpec(messageSpec);
+        dto.setReportingEntity(reportingEntity);
+
+        // WHEN
+        GirItemProcessor processor = new GirItemProcessor();
+
+        Declaration declaration = processor.process(dto);
+
+        // THEN
+        assertEquals("REJECTED", declaration.getStatus());
+    }
+
+    @Test
+    void shouldReturnErrorWhenMessageTypeIndicIsInvalid() throws Exception {
+
+        // GIVEN
+        MessageSpecDto messageSpec = new MessageSpecDto();
+        messageSpec.setMessageRefId("MSG003");
+        messageSpec.setMessageTypeIndic("GIR999");
+
+        ReportingEntityDto reportingEntity = new ReportingEntityDto();
+        reportingEntity.setCompanyName("ABC GROUP");
+        reportingEntity.setCountry("FR");
+        reportingEntity.setFiscalYear(2025);
+
+        GirXmlDto dto = new GirXmlDto();
+        dto.setMessageSpec(messageSpec);
+        dto.setReportingEntity(reportingEntity);
+
+        // WHEN
+        GirItemProcessor processor = new GirItemProcessor();
+
+        Declaration declaration = processor.process(dto);
+
+        // THEN
+        assertEquals("ERROR", declaration.getStatus());
+    }
 }

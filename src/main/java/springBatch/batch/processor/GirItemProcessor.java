@@ -15,23 +15,27 @@ public class GirItemProcessor implements ItemProcessor<GirXmlDto, Declaration> {
 
 	    String type = item.getMessageSpec().getMessageTypeIndic();
 
-	    if (!"GIR101".equals(type)
-	            && !"GIR102".equals(type)
-	            && !"GIR103".equals(type)) {
-
-	        return null;
-	    }
-
 	    Declaration d = new Declaration();
 
-	    d.setMessageRefId(item.getMessageSpec().getMessageRefId());
+		d.setMessageRefId(item.getMessageSpec().getMessageRefId());
 	    d.setMessageTypeIndic(type);
 
 	    d.setCompanyName(item.getReportingEntity().getCompanyName());
 	    d.setCountry(item.getReportingEntity().getCountry());
 	    d.setFiscalYear(item.getReportingEntity().getFiscalYear());
 
-	    d.setStatus("OK");
+		if(item.getReportingEntity().getCompanyName() == null){
+			d.setStatus("REJECTED");
+		}else{
+			d.setStatus("OK");
+		}
+
+		if (!"GIR101".equals(type)
+				&& !"GIR102".equals(type)
+				&& !"GIR103".equals(type)) {
+
+			d.setStatus("ERROR");
+		}
 
 	    return d;
 	}
