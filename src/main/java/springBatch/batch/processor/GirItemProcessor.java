@@ -1,15 +1,25 @@
 package springBatch.batch.processor;
 
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import springBatch.dto.GirXmlDto;
 import springBatch.entity.Declaration;
+import springBatch.exceptions.refIdExistException;
+import springBatch.repository.DeclarationRepository;
 
 
 @Component
 public class GirItemProcessor implements ItemProcessor<GirXmlDto, Declaration> {
-//le process ici : transforme le DTO XML en entit Declaration selon des regles 
+//le process ici : transforme le DTO XML en entit Declaration selon des regles
+	
+	 public DeclarationRepository declarationRepository;
+
+	public GirItemProcessor(DeclarationRepository declarationRepository) {
+	    this.declarationRepository = declarationRepository;
+	 }
+
 	@Override
 	public Declaration process(GirXmlDto item) {
 
@@ -35,6 +45,14 @@ public class GirItemProcessor implements ItemProcessor<GirXmlDto, Declaration> {
 				&& !"GIR103".equals(type)) {
 
 			d.setStatus("ERROR");
+		}
+		if(declarationRepository.existsByMessageRefId(
+		        item.getMessageSpec().getMessageRefId())){
+
+		    throw new refIdExistException(
+		        "Le MessageRefId existe déjà."
+		    );
+
 		}
 
 	    return d;

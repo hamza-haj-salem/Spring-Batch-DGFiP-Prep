@@ -14,7 +14,7 @@ public class GirJobConfig {
 	// on peut met ici avec GirStepConfig
     @Bean
     public Job girJob(JobRepository jobRepository, Step girStep) {
-        return new JobBuilder("girJobHamza", jobRepository)
+        return new JobBuilder("girJob", jobRepository)
                 .start(girStep)
                 .build();
     }

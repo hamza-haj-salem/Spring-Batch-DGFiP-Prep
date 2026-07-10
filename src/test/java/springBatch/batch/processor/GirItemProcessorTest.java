@@ -2,16 +2,31 @@ package springBatch.batch.processor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import springBatch.dto.GirXmlDto;
 import springBatch.dto.MessageSpecDto;
 import springBatch.dto.ReportingEntityDto;
 import springBatch.entity.Declaration;
+import springBatch.repository.DeclarationRepository;
 
+@ExtendWith(MockitoExtension.class) //Utilise Mockito pendant l'exécution de
+									//ce class de test
 public class GirItemProcessorTest {
-
-
+	
+	 @Mock
+    private DeclarationRepository declarationRepository ;
+	private GirItemProcessor processor;
+	    @BeforeEach
+	    void setup(){
+	        processor = new GirItemProcessor(declarationRepository);
+	    }
+	
     @Test
     void shouldProcessValidGirXml() throws Exception {
         //test lancement PR dans jenkins depuis branche 3
@@ -35,11 +50,9 @@ public class GirItemProcessorTest {
         GirXmlDto girXmlDto = new GirXmlDto();
         girXmlDto.setMessageSpec(messageSpec);
         girXmlDto.setReportingEntity(reportingEntity);
-
-
-
-        // WHEN : appel du processor
-        GirItemProcessor processor = new GirItemProcessor();
+        
+       // GirItemProcessor processor = new GirItemProcessor(declarationRepository);
+      
 
         Declaration declaration = processor.process(girXmlDto);
         
@@ -74,7 +87,7 @@ public class GirItemProcessorTest {
         dto.setReportingEntity(reportingEntity);
 
         // WHEN
-        GirItemProcessor processor = new GirItemProcessor();
+        GirItemProcessor processor = new GirItemProcessor(declarationRepository);
 
         Declaration declaration = processor.process(dto);
 
@@ -100,7 +113,7 @@ public class GirItemProcessorTest {
         dto.setReportingEntity(reportingEntity);
 
         // WHEN
-        GirItemProcessor processor = new GirItemProcessor();
+        GirItemProcessor processor = new GirItemProcessor(declarationRepository);
 
         Declaration declaration = processor.process(dto);
 

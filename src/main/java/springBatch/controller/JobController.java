@@ -1,6 +1,10 @@
 package springBatch.controller;
 
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.batch.core.BatchStatus;
@@ -55,21 +59,89 @@ public class JobController {
         }
     }
     
-    @GetMapping("/gir/status") public ResponseEntity<String> getLastJobStatus() {
-    	var instances = jobExplorer.getJobInstances("girJob", 0, 1);
-    	if (instances.isEmpty()) {
-    		return ResponseEntity.ok("Aucun job trouvé");
-    	}
-    	
-    	var executions = jobExplorer.getJobExecutions(instances.get(0));
-    	var lastExecution = executions.iterator().next();
-    	return ResponseEntity.ok( "Job status = " + lastExecution.getStatus() ); 
-    	}
+    @GetMapping("/gir/executions")
+    public ResponseEntity<?> getExecutions() {
+
+        var instances = jobExplorer.getJobInstances("girJob", 0, 100);
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        
+        DateTimeFormatter formatter = 
+    	        DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
+        for (var instance : instances) {
+
+            var executions = jobExplorer.getJobExecutions(instance);
+
+            for (var execution : executions) {
+
+                Map<String, Object> item = new HashMap<>();
+
+                item.put("id", execution.getId());
+                item.put("status", execution.getStatus());
+                item.put("startTime", execution.getStartTime()!= null ?
+                		execution.getStartTime().format(formatter)
+                	    : null);
+                item.put("endTime", execution.getEndTime()!= null ?
+                		execution.getStartTime().format(formatter)
+                	    : null);
+                item.put("exitCode",
+                        execution.getExitStatus().getExitCode());
+
+                result.add(item);
+            }
+        }
+
+        return ResponseEntity.ok(result);
+    }
     
+    @GetMapping("/gir/lastJobInstance")
+    public ResponseEntity<?> getLastJobStatus() {
+
+        var instances = jobExplorer.getJobInstances("girJob", 0, 1);
+
+        if (instances.isEmpty()) {
+            return ResponseEntity.ok(Map.of("status", "Aucun job"));
+        }
+
+        var executions = jobExplorer.getJobExecutions(instances.get(0));
+        var lastExecution = executions.iterator().next();
+
+        DateTimeFormatter formatter =
+                DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
+        Map<String, Object> result = new HashMap<>();
+
+        result.put("jobName", lastExecution.getJobInstance().getJobName());
+        result.put("status", lastExecution.getStatus().toString());
+
+        result.put("startTime",
+                lastExecution.getStartTime() != null
+                        ? lastExecution.getStartTime().format(formatter)
+                        : null);
+
+        result.put("endTime",
+                lastExecution.getEndTime() != null
+                        ? lastExecution.getEndTime().format(formatter)
+                        : null);
+
+        result.put("exitCode",
+                lastExecution.getExitStatus().getExitCode());
+
+        String reason = "";
+        String firstLineException = lastExecution.getExitStatus().getExitDescription().split("\n")[0];
+        reason = firstLineException.substring(firstLineException.indexOf(":") + 1).trim();
+
+        result.put("reason", reason);
+
+        return ResponseEntity.ok(result);
+    }
+  /*  
     @GetMapping("/gir/lastJob") public JobInstance getLastJob() {
     	var instances = jobExplorer.getJobInstances("girJobHamza", 0, 1);
-    	return jobExplorer.getLastJobInstance("girJobHamza");
+    	return jobExplorer.getLastJobInstance("girJob");
     	}
+    	*/
     
     @GetMapping("/gir/{idJob}") public JobInstance getJobById(@PathVariable Long idJob) {
     	var instances = jobExplorer.getJobInstances("girJob", 0, 1);
@@ -86,7 +158,7 @@ public class JobController {
     	 return ResponseEntity.ok(jobExecutions.toString());
     	}
     
-    @GetMapping("/gir/executions")
+    @GetMapping("/gir/executions2")
     public ResponseEntity<List<String>> getAllExecutions() {
 
         List<JobInstance> instances = jobExplorer.getJobInstances("girJob", 0, 10);
